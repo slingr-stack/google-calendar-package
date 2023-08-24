@@ -642,6 +642,11 @@ var parse = function (str) {
         throw err;
     }
 }
+/****************************************************
+ Constants
+ ****************************************************/
+
+var GOOGLEWORKSPACE_API_AUTH_URL = "https://oauth2.googleapis.com/token";
 
 /****************************************************
  Configurator
@@ -671,7 +676,6 @@ function setRequestHeaders(options) {
 
     sys.logs.debug('[googlecalendar] Set header Bearer');
     headers = mergeJSON(headers, {"Content-Type": "application/json"});
-
     headers = mergeJSON(headers, {"Authorization": "Bearer "+getAccessTokenForAccount()});
 
     if (headers.Accept === undefined || headers.Accept === null || headers.Accept === "") {
@@ -726,7 +730,7 @@ function getJsonWebToken() {
     return sys.utils.crypto.jwt.generate(
         {
             iss: config.get("serviceAccountEmail"),
-            aud: config.get("GOOGLECALENDAR_API_BASE_URL"),
+            aud: GOOGLEWORKSPACE_API_AUTH_URL,
             scope: scopesGlobal,
             iat: currentTime,
             exp: futureTime
