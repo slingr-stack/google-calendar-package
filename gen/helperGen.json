@@ -1,0 +1,380 @@
+{
+  "fileName": "functions",
+  "endpointName": "googlecalendar",
+  "apiDescriptors": [
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "DELETE",
+      "url": "/calendars/:calendarId/acl/:ruleId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/calendars/:calendarId/acl",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ],
+      "injectedHelper": true
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/calendars/:calendarId/acl/:ruleId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ],
+      "injectedHelper": true
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/calendars/:calendarId/acl",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "PATCH",
+      "url": "/calendars/:calendarId/acl/:ruleId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "PUT",
+      "url": "/calendars/:calendarId/acl/:ruleId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/calendars/:calendarId/acl/watch",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "DELETE",
+      "url": "/users/me/calendarList/:calendarId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/users/me/calendarList",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/users/me/calendarList/:calendarId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/users/me/calendarList",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "PATCH",
+      "url": "/users/me/calendarList/:calendarId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "PUT",
+      "url": "/users/me/calendarList/:calendarId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/users/me/calendarList/watch",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/calendars/:calendarId/clear",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/calendars",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/calendars/:calendarId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/calendars/:calendarId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "PATCH",
+      "url": "/calendars/:calendarId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "PUT",
+      "url": "/calendars/:calendarId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/channels/stop",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/colors",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "DELETE",
+      "url": "/calendars/:calendarId/events/:eventId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/calendars/:calendarId/events",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ],
+      "injectedHelper": true
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/calendars/:calendarId/events/:eventId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ],
+      "injectedHelper": true
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/calendars/:calendarId/events/import",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/calendars/:calendarId/events",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/calendars/:calendarId/events/:eventId/instances",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/calendars/:calendarId/events/:eventId/move",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "PATCH",
+      "url": "/calendars/:calendarId/events/:eventId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/calendars/:calendarId/events/quickAdd",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "PUT",
+      "url": "/calendars/:calendarId/events/:eventId",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/calendars/:calendarId/events/watch",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/freeBusy",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/users/me/settings",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "GET",
+      "url": "/users/me/settings/:setting",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    },
+    {
+      "prefix": "",
+      "suffix": "",
+      "method": "POST",
+      "url": "/users/me/settings/watch",
+      "omittableUrlParts": [],
+      "docsLinks": [
+        "https://developers.google.com/calendar/api/v3/reference"
+      ]
+    }
+  ]
+}

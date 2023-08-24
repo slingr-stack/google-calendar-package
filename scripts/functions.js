@@ -2,7 +2,36 @@
  Dependencies
  ****************************************************/
 
-var httpService = svc.http;
+var httpReference = dependencies.http;
+
+var httpDependency = {
+    get: httpReference.get,
+    post: httpReference.post,
+    put: httpReference.put,
+    patch: httpReference.patch,
+    delete: httpReference.delete,
+    head: httpReference.head,
+    options: httpReference.options
+};
+var httpService = {};
+
+function handleRequestWithRetry(requestFn, options, callbackData, callbacks) {
+    try {
+        return requestFn(options, callbackData, callbacks);
+    } catch (error) {
+        sys.logs.info("[googlecalendar] Handling request "+JSON.stringify(error));
+    }
+}
+
+function createWrapperFunction(requestFn) {
+    return function(options, callbackData, callbacks) {
+        return handleRequestWithRetry(requestFn, options, callbackData, callbacks);
+    };
+}
+
+for (var key in httpDependency) {
+    if (typeof httpDependency[key] === 'function') httpService[key] = createWrapperFunction(httpDependency[key]);
+}
 
 /****************************************************
  Helpers
@@ -47,7 +76,6 @@ exports.freeBusy = {};
 exports.users.me.settings = {};
 
 exports.users.me.settings.watch = {};
-
 
 exports.calendars.acl.delete = function(calendarId, ruleId, httpOptions) {
     if (!calendarId || !ruleId) {
@@ -478,17 +506,17 @@ exports.get = function(url, httpOptions, callbackData, callbacks) {
 };
 
 exports.post = function(url, httpOptions, callbackData, callbacks) {
-    options = checkHttpOptions(url, httpOptions);
+    var options = checkHttpOptions(url, httpOptions);
     return httpService.post(GoogleCalendar(options), callbackData, callbacks);
 };
 
 exports.put = function(url, httpOptions, callbackData, callbacks) {
-    options = checkHttpOptions(url, httpOptions);
+    var options = checkHttpOptions(url, httpOptions);
     return httpService.put(GoogleCalendar(options), callbackData, callbacks);
 };
 
 exports.patch = function(url, httpOptions, callbackData, callbacks) {
-    options = checkHttpOptions(url, httpOptions);
+    var options = checkHttpOptions(url, httpOptions);
     return httpService.patch(GoogleCalendar(options), callbackData, callbacks);
 };
 
@@ -508,11 +536,6 @@ exports.options = function(url, httpOptions, callbackData, callbacks) {
 };
 
 exports.utils = {};
-
-exports.utils.getConfiguration = function (property) {
-    sys.logs.debug('[googlecalendar] Get property: '+property);
-    return config.get(property);
-};
 
 exports.utils.parseTimestamp = function(dateString) {
     if (!dateString) {
@@ -543,14 +566,30 @@ exports.utils.formatTimestamp = function(date) {
         + 'Z';
 };
 
-exports.utils.verifySignature = function (body, signature) {
-    var secret = config.get("webhooksSharedKey");
-    if (!secret || secret === "" || !sys.utils.crypto.verifySignatureWithHmac(body, signature, secret, "HmacSHA256")) {
-        sys.logs.error("Invalid signature or body");
-        return false;
+exports.utils.fromDateToTimestamp = function(params) {
+    if (!!params) {
+        return {timestamp: new Date(params).getTime()};
     }
-    return true;
+    return null;
 };
+
+exports.utils.fromMillisToDate = function(params) {
+    if (!!params) {
+        var sdf = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            timeZone: 'UTC'
+        });
+        return {date: sdf.format(new Date(parseInt(params)))};
+    }
+    return null;
+};
+
+exports.utils.getConfiguration = function (property) {
+    sys.logs.debug('[googlecalendar] Get property: '+property);
+    return config.get(property);
+};
+
 
 /****************************************************
  Private helpers
@@ -564,7 +603,7 @@ var checkHttpOptions = function (url, options) {
             options = url || {};
         } else {
             if (!!options.path || !!options.params || !!options.body) {
-                // options contains the http package format
+                // options contain the http package format
                 options.path = url;
             } else {
                 // create html package
@@ -576,20 +615,20 @@ var checkHttpOptions = function (url, options) {
         }
     }
     return options;
-};
+}
 
 var isObject = function (obj) {
     return !!obj && stringType(obj) === '[object Object]'
-};
+}
 
-var stringType = Function.prototype.call.bind(Object.prototype.toString);
+var stringType = Function.prototype.call.bind(Object.prototype.toString)
 
 var parse = function (str) {
     try {
         if (arguments.length > 1) {
             var args = arguments[1], i = 0;
             return str.replace(/(:(?:\w|-)+)/g, () => {
-                if (typeof (args[i]) != 'string') throw new Error('Invalid type of argument: [' + args[i] + '] for url [' + str + '].');
+                if (typeof (args[i]) != 'string' && typeof (args[i]) != 'number') throw new Error('Invalid type of argument: [' + args[i] + '] for url [' + str + '].');
                 return args[i++];
             });
         } else {
@@ -603,13 +642,6 @@ var parse = function (str) {
         throw err;
     }
 }
-
-/****************************************************
- Constants
- ****************************************************/
-
-var GOOGLE_CALENDAR_API_BASE_URL = "https://www.googleapis.com";
-var GOOGLE_CALENDAR_API_URL = GOOGLE_CALENDAR_API_BASE_URL+"/calendar/v3";
 
 /****************************************************
  Configurator
@@ -627,28 +659,81 @@ var GoogleCalendar = function (options) {
  ****************************************************/
 
 function setApiUri(options) {
+    var API_URL = config.get("GOOGLECALENDAR_API_BASE_URL");
     var url = options.path || "";
-    options.url = GOOGLE_CALENDAR_API_URL + url;
+    options.url = API_URL + url;
     sys.logs.debug('[googlecalendar] Set url: ' + options.path + "->" + options.url);
     return options;
 }
 
 function setRequestHeaders(options) {
     var headers = options.headers || {};
-    if (config.get("authenticationMethod") === "apiKey") {
-        sys.logs.debug('[googlecalendar] Set header apikey');
-        headers = mergeJSON(headers, {"Authorization": "API-Key " + config.get("apiKey")});
-    } else {
-        sys.logs.debug('[googlecalendar] Set header Bearer');
-        headers = mergeJSON(headers, {"Authorization": "Bearer " + config.get("accessToken")});
-    }
+
+    sys.logs.debug('[googlecalendar] Set header Bearer');
     headers = mergeJSON(headers, {"Content-Type": "application/json"});
-    if (headers.Accept === undefined) {
+
+    headers = mergeJSON(headers, {"Authorization": "Bearer "+getAccessTokenForAccount()});
+
+    if (headers.Accept === undefined || headers.Accept === null || headers.Accept === "") {
         sys.logs.debug('[googlecalendar] Set header accept');
-        headers = mergeJSON(headers, "Accept", "application/json");
+        headers = mergeJSON(headers, {"Accept": "application/json"});
     }
+
     options.headers = headers;
     return options;
+}
+
+function getAccessTokenForAccount(account) {
+    account = account || "account";
+    sys.logs.info('[googlecalendar] Getting access token for account: '+account);
+    var installationJson = sys.storage.get('installationInfo-GoogleCalendar---'+account) || {id: null};
+    var token = installationJson.token || null;
+    var expiration = installationJson.expiration || 0;
+    if (!token || expiration < new Date().getTime()) {
+        sys.logs.info('[googlecalendar] Access token is expired or not found. Getting new token');
+        var res = httpService.post(
+            {
+                url: "https://oauth2.googleapis.com/token",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: {
+                    grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                    assertion: getJsonWebToken()
+                }
+            });
+        token = res.access_token;
+        var expires_at = res.expires_in;
+        expiration = new Date(new Date(expires_at) - 1 * 60 * 1000).getTime();
+        installationJson = mergeJSON(installationJson, {"token": token, "expiration": expiration});
+        sys.logs.info('[googlecalendar] Saving new token for account: ' + account);
+        sys.storage.replace('installationInfo-GoogleCalendar---'+account, installationJson);
+    }
+    return token;
+}
+
+function getJsonWebToken() {
+    var currentTime = new Date().getTime();
+    var futureTime = new Date(currentTime + ( 10 * 60 * 1000)).getTime();
+    var scopeProp= config.get("scope");
+    var scopes;
+    if (!!scopeProp) {
+        scopes = scopeProp.map(function (s) {
+            return "https://www.googleapis.com/auth/" + s;
+        });
+    }
+    var scopesGlobal = scopes.join(" ");
+    return sys.utils.crypto.jwt.generate(
+        {
+            iss: config.get("serviceAccountEmail"),
+            aud: config.get("GOOGLECALENDAR_API_BASE_URL"),
+            scope: scopesGlobal,
+            iat: currentTime,
+            exp: futureTime
+        },
+        config.get("privateKey"),
+        "RS256"
+    )
 }
 
 function mergeJSON (json1, json2) {

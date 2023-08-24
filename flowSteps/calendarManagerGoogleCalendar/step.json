@@ -1,0 +1,77 @@
+{
+	"label": "Calendar Manager for googlecalendar",
+	"name": "calendarManagerGoogleCalendar",
+	"category": "integrations",
+	"description": "This flow step will send a request to handle calendars with the googlecalendar endpoint",
+	"inputs": [
+		{
+			"label": "Action",
+			"name": "action",
+			"type": "urlParams",
+			"required": "true",
+			"options": {
+				"type": "dropDown",
+				"possibleValues": [
+					{
+						"label": "GET /calendars/{idCalendar}",
+						"description": "Find One Calendar",
+						"name": "findOne"
+					},
+					{
+						"label": "GET /calendars",
+						"description": "Find All Calendars",
+						"name": "findAll"
+					},
+					{
+						"label": "POST /calendars/{idCalendar}",
+						"description": "Create Calendar",
+						"name": "create"
+					},
+					{
+						"label": "PUT /calendars/{idCalendar}",
+						"description": "Update a Calendar",
+						"name": "update"
+					},
+					{
+						"label": "DELETE /calendars/{idCalendar}",
+						"description": "Delete a Calendar",
+						"name": "delete"
+					}
+				]
+			}
+		},
+		{
+			"label": "Path Params",
+			"name": "params",
+			"description": "Parameters attached to the end of a url in a key value format. (e.g. key=ABC123)",
+			"type": "keyValue"
+		},
+		{
+			"label": "Body",
+			"name": "body",
+			"type": "json",
+			"description": "Content to be sent to the server.",
+			"options": {
+				"allowContextSelector": "true"
+			}
+		},
+		{
+			"label": "Full Response",
+			"name": "fullResponse",
+			"type": "boolean",
+			"description": "Include extended information about response",
+			"defaultValue": false,
+			"options": {
+				"allowContextSelector": "false"
+			}
+		}
+	],
+	"outputs": [
+		{
+			"label": "Response",
+			"name": "response",
+			"type": "object",
+			"description": "The response to external URL"
+		}
+	]
+}

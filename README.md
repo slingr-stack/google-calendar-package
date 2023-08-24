@@ -1,12 +1,21 @@
----
-title: Google Calendar endpoint
-keywords: 
-last_updated: April 27, 2023
-tags: []
-summary: "Detailed description of the Google Calendar endpoint."
----
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Last Updated</th>
+        <th>Summary</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Google Calendar package</td>
+        <td>August 23, 2023</td>
+        <td>Detailed description of the API of the Google Calendar package.</td>
+    </tr>
+    </tbody>
+</table>
 
-## Overview
+# Overview
 
 This endpoint allows direct access to the [Google Calendar API](https://developers.google.com/calendar/api/v3/reference/) through a service account, however it provides shortcuts and helpers for most common use cases.
 
@@ -40,314 +49,293 @@ As explained above, this value also comes from the credentials file.
 
 # Javascript API
 
-The Javascript API of the googlecalendar endpoint has three pieces:
+The Javascript API of the googlecalendar package has three pieces:
 
-- **HTTP requests**: These allow to make regular HTTP requests.
+- **HTTP requests**: These allow making regular HTTP requests.
 - **Shortcuts**: These are helpers to make HTTP request to the API in a more convenient way.
-- **Additional Helpers**: These helpers provide additional features that facilitate or improves the endpoint usage in SLINGR.
+- **Additional Helpers**: These helpers provide additional features that facilitate or improves the package usage in SLINGR.
 
 ## HTTP requests
 You can make `DELETE`,`GET`,`POST`,`PATCH`,`PUT` requests to the [googlecalendar API](https://developers.google.com/calendar/api/v3/reference) like this:
 ```javascript
-var response = app.endpoints.googlecalendar.delete('/calendars/:calendarId/events/:eventId')
-var response = app.endpoints.googlecalendar.get('/users/me/calendarList')
-var response = app.endpoints.googlecalendar.post('/calendars/:calendarId/clear', body)
-var response = app.endpoints.googlecalendar.post('/calendars/:calendarId/clear')
-var response = app.endpoints.googlecalendar.patch('/calendars/:calendarId/acl/:ruleId', body)
-var response = app.endpoints.googlecalendar.patch('/calendars/:calendarId/acl/:ruleId')
-var response = app.endpoints.googlecalendar.put('/calendars/:calendarId', body)
-var response = app.endpoints.googlecalendar.put('/calendars/:calendarId')
+var response = pkg.googlecalendar.functions.delete('/users/me/calendarList/:calendarId')
+var response = pkg.googlecalendar.functions.get('/users/me/calendarList')
+var response = pkg.googlecalendar.functions.post('/calendars/:calendarId/events/quickAdd', body)
+var response = pkg.googlecalendar.functions.post('/calendars/:calendarId/events/quickAdd')
+var response = pkg.googlecalendar.functions.patch('/calendars/:calendarId/acl/:ruleId', body)
+var response = pkg.googlecalendar.functions.patch('/calendars/:calendarId/acl/:ruleId')
+var response = pkg.googlecalendar.functions.put('/users/me/calendarList/:calendarId', body)
+var response = pkg.googlecalendar.functions.put('/users/me/calendarList/:calendarId')
 ```
 
-Please take a look at the documentation of the [HTTP endpoint](https://github.com/slingr-stack/http-endpoint#javascript-api)
+Please take a look at the documentation of the [HTTP service](https://github.com/slingr-stack/http-service)
 for more information about generic requests.
 
 ## Shortcuts
 
-Instead of having to use the generic HTTP methods, you can (and should) make use of the helpers provided in the endpoint:
+Instead of having to use the generic HTTP methods, you can (and should) make use of the helpers provided in the package:
 <details>
     <summary>Click here to see all the helpers</summary>
 
 <br>
 
-* API URL: '/calendars/:calendarId/acl/:ruleId'
-* HTTP Method: 'DELETE'
+* API URL: '/calendars'
+* HTTP Method: 'POST'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.calendars.acl.delete(calendarId, ruleId)
-```
----
-* API URL: '/users/me/calendarList/:calendarId'
-* HTTP Method: 'DELETE'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.calendarList.delete(calendarId)
-```
----
-* API URL: '/calendars/:calendarId/events/:eventId'
-* HTTP Method: 'DELETE'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.events.delete(calendarId, eventId)
-```
----
-* API URL: '/calendars/:calendarId/acl'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.acl.get(calendarId)
-```
----
-* API URL: '/calendars/:calendarId/acl/:ruleId'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.acl.get(calendarId, ruleId)
-```
----
-* API URL: '/users/me/calendarList'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.calendarList.get()
-```
----
-* API URL: '/users/me/calendarList/:calendarId'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.calendarList.get(calendarId)
-```
----
-* API URL: '/users/me/calendarList/:calendarId'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.calendarList.get()
+pkg.googlecalendar.functions.calendars.post(body)
 ```
 ---
 * API URL: '/calendars/:calendarId'
 * HTTP Method: 'GET'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.calendars.get(calendarId)
+pkg.googlecalendar.functions.calendars.get(calendarId)
 ```
 ---
-* API URL: '/colors'
+* API URL: '/calendars/:calendarId'
+* HTTP Method: 'POST'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.post(body)
+```
+---
+* API URL: '/calendars/:calendarId'
+* HTTP Method: 'PATCH'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.patch(calendarId, body)
+```
+---
+* API URL: '/calendars/:calendarId'
+* HTTP Method: 'PUT'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.put(calendarId, body)
+```
+---
+* API URL: '/calendars/:calendarId/acl'
 * HTTP Method: 'GET'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.colors.get()
-```
----
-* API URL: '/calendars/:calendarId/events'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.events.get(calendarId)
-```
----
-* API URL: '/calendars/:calendarId/events/:eventId'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.events.get(calendarId, eventId)
-```
----
-* API URL: '/calendars/:calendarId/events/:eventId/instances'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.events.instances.get(calendarId, eventId)
-```
----
-* API URL: '/users/me/settings'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.settings.get()
-```
----
-* API URL: '/users/me/settings/:setting'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.settings.get(setting)
-```
----
-* API URL: '/users/me/settings/:setting'
-* HTTP Method: 'GET'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.settings.get()
+pkg.googlecalendar.functions.calendars.acl.get(calendarId)
 ```
 ---
 * API URL: '/calendars/:calendarId/acl'
 * HTTP Method: 'POST'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.calendars.acl.post(calendarId, body)
-```
----
-* API URL: '/calendars/:calendarId/acl/watch'
-* HTTP Method: 'POST'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.acl.watch.post(calendarId, body)
-```
----
-* API URL: '/users/me/calendarList'
-* HTTP Method: 'POST'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.calendarList.post(body)
-```
----
-* API URL: '/users/me/calendarList/watch'
-* HTTP Method: 'POST'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.calendarList.watch.post(body)
+pkg.googlecalendar.functions.calendars.acl.post(calendarId, body)
 ```
 ---
 * API URL: '/calendars/:calendarId/clear'
 * HTTP Method: 'POST'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.calendars.clear.post(calendarId, body)
+pkg.googlecalendar.functions.calendars.clear.post(calendarId, body)
 ```
 ---
-* API URL: '/calendars'
-* HTTP Method: 'POST'
+* API URL: '/calendars/:calendarId/events'
+* HTTP Method: 'GET'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.calendars.post(body)
-```
----
-* API URL: '/calendars/:calendarId'
-* HTTP Method: 'POST'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.post(calendarId, body)
-```
----
-* API URL: '/calendars/:calendarId'
-* HTTP Method: 'POST'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.post(calendarId, body)
-```
----
-* API URL: '/channels/stop'
-* HTTP Method: 'POST'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.channels.stop.post(body)
-```
----
-* API URL: '/calendars/:calendarId/events/import'
-* HTTP Method: 'POST'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.events.import.post(calendarId, body)
+pkg.googlecalendar.functions.calendars.events.get(calendarId)
 ```
 ---
 * API URL: '/calendars/:calendarId/events'
 * HTTP Method: 'POST'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.calendars.events.post(calendarId, body)
+pkg.googlecalendar.functions.calendars.events.post(calendarId, body)
 ```
 ---
-* API URL: '/calendars/:calendarId/events/:eventId/move'
+* API URL: '/calendars/:calendarId/acl/:ruleId'
+* HTTP Method: 'DELETE'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.acl.delete(calendarId, ruleId)
+```
+---
+* API URL: '/calendars/:calendarId/acl/:ruleId'
+* HTTP Method: 'GET'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.acl.get(calendarId, ruleId)
+```
+---
+* API URL: '/calendars/:calendarId/acl/:ruleId'
+* HTTP Method: 'PATCH'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.acl.patch(calendarId, ruleId, body)
+```
+---
+* API URL: '/calendars/:calendarId/acl/:ruleId'
+* HTTP Method: 'PUT'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.acl.put(calendarId, ruleId, body)
+```
+---
+* API URL: '/calendars/:calendarId/acl/watch'
 * HTTP Method: 'POST'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.calendars.events.move.post(calendarId, eventId, body)
+pkg.googlecalendar.functions.calendars.acl.watch.post(calendarId, body)
+```
+---
+* API URL: '/calendars/:calendarId/events/:eventId'
+* HTTP Method: 'DELETE'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.events.delete(calendarId, eventId)
+```
+---
+* API URL: '/calendars/:calendarId/events/:eventId'
+* HTTP Method: 'GET'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.events.get(calendarId, eventId)
+```
+---
+* API URL: '/calendars/:calendarId/events/:eventId'
+* HTTP Method: 'PATCH'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.events.patch(calendarId, eventId, body)
+```
+---
+* API URL: '/calendars/:calendarId/events/:eventId'
+* HTTP Method: 'PUT'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.events.put(calendarId, eventId, body)
+```
+---
+* API URL: '/calendars/:calendarId/events/import'
+* HTTP Method: 'POST'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.events.import.post(calendarId, body)
 ```
 ---
 * API URL: '/calendars/:calendarId/events/quickAdd'
 * HTTP Method: 'POST'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.calendars.events.quickAdd.post(calendarId, body)
+pkg.googlecalendar.functions.calendars.events.quickAdd.post(calendarId, body)
 ```
 ---
 * API URL: '/calendars/:calendarId/events/watch'
 * HTTP Method: 'POST'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.calendars.events.watch.post(calendarId, body)
+pkg.googlecalendar.functions.calendars.events.watch.post(calendarId, body)
+```
+---
+* API URL: '/calendars/:calendarId/events/:eventId/instances'
+* HTTP Method: 'GET'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.events.instances.get(calendarId, eventId)
+```
+---
+* API URL: '/calendars/:calendarId/events/:eventId/move'
+* HTTP Method: 'POST'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.calendars.events.move.post(calendarId, eventId, body)
+```
+---
+* API URL: '/channels/stop'
+* HTTP Method: 'POST'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.channels.stop.post(body)
+```
+---
+* API URL: '/colors'
+* HTTP Method: 'GET'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.colors.get()
 ```
 ---
 * API URL: '/freeBusy'
 * HTTP Method: 'POST'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.freeBusy.post(body)
+pkg.googlecalendar.functions.freeBusy.post(body)
+```
+---
+* API URL: '/users/me/calendarList'
+* HTTP Method: 'GET'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.users.me.calendarList.get()
+```
+---
+* API URL: '/users/me/calendarList'
+* HTTP Method: 'POST'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.users.me.calendarList.post(body)
+```
+---
+* API URL: '/users/me/settings'
+* HTTP Method: 'GET'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.users.me.settings.get()
+```
+---
+* API URL: '/users/me/calendarList/:calendarId'
+* HTTP Method: 'DELETE'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.users.me.calendarList.delete(calendarId)
+```
+---
+* API URL: '/users/me/calendarList/:calendarId'
+* HTTP Method: 'GET'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.users.me.calendarList.get()
+```
+---
+* API URL: '/users/me/calendarList/:calendarId'
+* HTTP Method: 'PATCH'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.users.me.calendarList.patch(calendarId, body)
+```
+---
+* API URL: '/users/me/calendarList/:calendarId'
+* HTTP Method: 'PUT'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.users.me.calendarList.put(calendarId, body)
+```
+---
+* API URL: '/users/me/calendarList/watch'
+* HTTP Method: 'POST'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.users.me.calendarList.watch.post(body)
+```
+---
+* API URL: '/users/me/settings/:setting'
+* HTTP Method: 'GET'
+* More info: https://developers.google.com/calendar/api/v3/reference
+```javascript
+pkg.googlecalendar.functions.users.me.settings.get()
 ```
 ---
 * API URL: '/users/me/settings/watch'
 * HTTP Method: 'POST'
 * More info: https://developers.google.com/calendar/api/v3/reference
 ```javascript
-app.endpoints.googlecalendar.users.me.settings.watch.post(body)
-```
----
-* API URL: '/calendars/:calendarId/acl/:ruleId'
-* HTTP Method: 'PATCH'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.acl.patch(calendarId, ruleId, body)
-```
----
-* API URL: '/users/me/calendarList/:calendarId'
-* HTTP Method: 'PATCH'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.calendarList.patch(calendarId, body)
-```
----
-* API URL: '/calendars/:calendarId'
-* HTTP Method: 'PATCH'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.patch(calendarId, body)
-```
----
-* API URL: '/calendars/:calendarId/events/:eventId'
-* HTTP Method: 'PATCH'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.events.patch(calendarId, eventId, body)
-```
----
-* API URL: '/calendars/:calendarId/acl/:ruleId'
-* HTTP Method: 'PUT'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.acl.put(calendarId, ruleId, body)
-```
----
-* API URL: '/users/me/calendarList/:calendarId'
-* HTTP Method: 'PUT'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.users.me.calendarList.put(calendarId, body)
-```
----
-* API URL: '/calendars/:calendarId'
-* HTTP Method: 'PUT'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.put(calendarId, body)
-```
----
-* API URL: '/calendars/:calendarId/events/:eventId'
-* HTTP Method: 'PUT'
-* More info: https://developers.google.com/calendar/api/v3/reference
-```javascript
-app.endpoints.googlecalendar.calendars.events.put(calendarId, eventId, body)
+pkg.googlecalendar.functions.users.me.settings.watch.post(body)
 ```
 ---
 
@@ -355,7 +343,7 @@ app.endpoints.googlecalendar.calendars.events.put(calendarId, eventId, body)
 
 ## Flow Step
 
-As an alternative option to using scripts, you can make use of Flows and Flow Steps specifically created for the endpoint:
+As an alternative option to using scripts, you can make use of Flows and Flow Steps specifically created for the package:
 <details>
     <summary>Click here to see the Flow Steps</summary>
 
@@ -365,7 +353,7 @@ As an alternative option to using scripts, you can make use of Flows and Flow St
 
 ### Generic Flow Step
 
-Generic flow step for full use of the entire endpoint and its services.
+Generic flow step for full use of the entire package and its services.
 
 <h3>Inputs</h3>
 
@@ -465,7 +453,7 @@ Generic flow step for full use of the entire endpoint and its services.
         <td>no</td>
         <td> 5000 </td>
         <td> overrideSettings </td>
-        <td>Connect timeout interval, in milliseconds (0 = infinity).</td>
+        <td>Connect a timeout interval, in milliseconds (0 = infinity).</td>
     </tr>
     <tr>
         <td>Read Timeout</td>
@@ -473,7 +461,7 @@ Generic flow step for full use of the entire endpoint and its services.
         <td>no</td>
         <td> 60000 </td>
         <td> overrideSettings </td>
-        <td>Read timeout interval, in milliseconds (0 = infinity).</td>
+        <td>Read a timeout interval, in milliseconds (0 = infinity).</td>
     </tr>
     </tbody>
 </table>
@@ -502,7 +490,7 @@ Generic flow step for full use of the entire endpoint and its services.
 
 </details>
 
-For more information about how shortcuts or flow steps works, and how they are generated, take a look at the [slingr-helpgen tool](https://github.com/slingr-stack/slingr-helpgen).
+For more information about how shortcuts or flow steps work, and how they are generated, take a look at the [slingr-helpgen tool](https://github.com/slingr-stack/slingr-helpgen).
 
 ## Additional Flow Step
 
@@ -715,3 +703,16 @@ SLINGR is a low-code rapid application development platform that accelerates dev
 ## License
 
 This endpoint is licensed under the Apache License 2.0. See the `LICENSE` file for more details.
+
+## Dependencies
+* HTTP Service (Latest Version)
+
+# About SLINGR
+
+SLINGR is a low-code rapid application development platform that accelerates development, with robust architecture for integrations and executing custom workflows and automation.
+
+[More info about SLINGR](https://slingr.io)
+
+# License
+
+This package is licensed under the Apache License 2.0. See the `LICENSE` file for more details.
