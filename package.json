@@ -1,62 +1,92 @@
 {
-	"label": "Google Calendar",
-	"name": "googlecalendar",
-	"dependencies": [],
-	"configuration":[
-		{
-			"name": "serviceAccountEmail",
-			"label": "Service Account Email",
-			"description": "The email from service account created",
-			"type": "text",
-			"required": true
-		},
-		{
-			"name": "privateKey",
-			"label": "Private Key",
-			"description": "The private key associated to the service account",
-			"type": "password",
-			"required": true
-		},
-		{
-			"label": "Auth Scopes",
-			"name": "authScopes",
-			"description": "The auth scopes the service accounts have, if you select scopes that don't belong to your service account it will lead to authorization errors",
-			"type": "dropDown",
-			"multiplicity": "many",
-			"defaultValue": ["calendar"],
-			"typeOptions": {
-				"allowCustom": true,
-				"possibleValues":[
-					{
-						"label": "Calendar (Complete access)",
-						"name": "calendar"
-					},
-					{
-						"label": "Calendar - Events (View and edit events on all your calendars)",
-						"name": "calendar.events"
-					},
-					{
-						"label": "Calendar - Events ReadOnly (View events on all your calendars)",
-						"name": "calendar.events.readonly"
-					},
-					{
-						"label": "Calendar ReadOnly (See and download any calendar you can access using your Google Calendar)",
-						"name": "calendar.readonly"
-					},
-					{
-						"label": "Calendar settings ReadOnly (View your Calendar settings)",
-						"name": "calendar.settings.readonly"
-					}
-				]
-			}
-		}
-	],
-	"events": [],
-	"metadata": [
-		{
-			"type": "script",
-			"namespace": "api",
-			"path": "/scripts/functions.js"
-		}
-	]
+    "name": "googlecalendar",
+    "label": "Google Calendar Package",
+    "dependencies": [
+        {
+            "type": "service",
+            "name": "http",
+            "version": "v1.2.6",
+            "instanceId": "shared"
+        }
+    ],
+    "configuration": [
+        {
+            "name": "serviceAccountEmail",
+            "label": "Service Account Email",
+            "description": "The email from service account created",
+            "type": "text",
+            "required": true
+        },
+        {
+            "name": "privateKey",
+            "label": "Private Key",
+            "description": "The private key associated to the service account",
+            "type": "password",
+            "required": true
+        },
+        {
+            "label": "Auth Scopes",
+            "name": "authScopes",
+            "description": "The auth scopes the service accounts have, if you select scopes that don't belong to your service account it will lead to authorization errors",
+            "type": "dropDown",
+            "multiplicity": "many",
+            "defaultValue": [
+                "calendar"
+            ],
+            "typeOptions": {
+                "allowCustom": true,
+                "possibleValues": [
+                    {
+                        "label": "Calendar (Complete access)",
+                        "name": "calendar"
+                    },
+                    {
+                        "label": "Calendar - Events (View and edit events on all your calendars)",
+                        "name": "calendar.events"
+                    },
+                    {
+                        "label": "Calendar - Events ReadOnly (View events on all your calendars)",
+                        "name": "calendar.events.readonly"
+                    },
+                    {
+                        "label": "Calendar ReadOnly (See and download any calendar you can access using your Google Calendar)",
+                        "name": "calendar.readonly"
+                    },
+                    {
+                        "label": "Calendar settings ReadOnly (View your Calendar settings)",
+                        "name": "calendar.settings.readonly"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "GOOGLECALENDAR_API_BASE_URL",
+            "label": "Googlecalendar Api Url",
+            "type": "label",
+            "value": "https://www.googleapis.com/calendar/v3"
+        }
+    ],
+    "events": [],
+    "metadata": [
+        {
+            "type": "script",
+            "namespace": "api",
+            "path": "/scripts/functions.js"
+        },
+        {
+            "type": "flowStep",
+            "namespace": "steps",
+            "path": "/flowSteps/apiCallGoogleCalendar"
+        },
+        {
+            "type": "flowStep",
+            "namespace": "steps",
+            "path": "/flowSteps/eventsManagerGoogleCalendar"
+        },
+        {
+            "type": "flowStep",
+            "namespace": "steps",
+            "path": "/flowSteps/calendarManagerGoogleCalendar"
+        }
+    ]
 }
