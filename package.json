@@ -70,22 +70,22 @@
     "metadata": [
         {
             "type": "script",
-            "namespace": "api",
+            "namespace": "functions",
             "path": "/scripts/functions.js"
         },
         {
             "type": "flowStep",
-            "namespace": "steps",
+            "namespace": "apiCallGoogleCalendar",
             "path": "/flowSteps/apiCallGoogleCalendar"
         },
         {
             "type": "flowStep",
-            "namespace": "steps",
+            "namespace": "eventsManagerGoogleCalendar",
             "path": "/flowSteps/eventsManagerGoogleCalendar"
         },
         {
             "type": "flowStep",
-            "namespace": "steps",
+            "namespace": "calendarManagerGoogleCalendar",
             "path": "/flowSteps/calendarManagerGoogleCalendar"
         }
     ]
