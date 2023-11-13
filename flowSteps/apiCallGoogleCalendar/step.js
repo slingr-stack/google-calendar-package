@@ -36,7 +36,7 @@ step.apiCallGoogleCalendar = function (inputs) {
 			urlValue: "",
 			paramsValue: []
 		},
-		method: inputs.url.urlValue ? inputs.url.urlValue.split(" ")[0] : ""
+		method: inputs.method || "get",
 	};
 
 	inputsLogic.headers = isObject(inputsLogic.headers) ? inputsLogic.headers : stringToObject(inputsLogic.headers);
