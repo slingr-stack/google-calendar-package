@@ -1,6 +1,6 @@
 {
     "name": "googlecalendar",
-    "label": "Google Calendar Package",
+    "label": "Google Calendar",
     "dependencies": [
         {
             "type": "service",
@@ -82,23 +82,23 @@
                 "possibleValues": [
                     {
                         "label": "Calendar (Complete access)",
-                        "name": "calendar"
+                        "name": "'calendar'"
                     },
                     {
                         "label": "Calendar - Events (View and edit events on all your calendars)",
-                        "name": "calendar.events"
+                        "name": "'calendar.events'"
                     },
                     {
                         "label": "Calendar - Events ReadOnly (View events on all your calendars)",
-                        "name": "calendar.events.readonly"
+                        "name": "'calendar.events.readonly'"
                     },
                     {
                         "label": "Calendar ReadOnly (See and download any calendar you can access using your Google Calendar)",
-                        "name": "calendar.readonly"
+                        "name": "'calendar.readonly'"
                     },
                     {
                         "label": "Calendar settings ReadOnly (View your Calendar settings)",
-                        "name": "calendar.settings.readonly"
+                        "name": "'calendar.settings.readonly'"
                     }
                 ]
             }
