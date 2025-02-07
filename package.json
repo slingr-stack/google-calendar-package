@@ -7,22 +7,66 @@
             "name": "http",
             "version": "v1.2.6",
             "instanceId": "shared"
+        },
+        {
+            "type": "package",
+            "name": "oauth",
+            "version": "v1.0.33"
         }
     ],
+    "configurationBuilder": "/configurationBuilder.js",
     "configuration": [
+        {
+            "name": "authenticationMethod",
+            "label": "Authentication Method",
+            "required": true,
+            "defaultValue": "oAuth2",
+            "type": "buttonsGroup",
+            "typeOptions": {
+                "allowCustom": false,
+                "possibleValues": [
+                    {
+                        "label": "Service Account",
+                        "name": "serviceAccount"
+                    },
+                    {
+                        "label": "OAuth 2.0",
+                        "name": "oAuth2"
+                    }
+                ]
+            }
+        },
         {
             "name": "serviceAccountEmail",
             "label": "Service Account Email",
             "description": "The email from service account created",
             "type": "text",
-            "required": true
+            "required": "config.authenticationMethod == 'serviceAccount'",
+            "visibility": "config.authenticationMethod == 'serviceAccount'"
         },
         {
             "name": "privateKey",
             "label": "Private Key",
             "description": "The private key associated to the service account",
             "type": "password",
-            "required": true
+            "required": "config.authenticationMethod == 'serviceAccount'",
+            "visibility": "config.authenticationMethod == 'serviceAccount'"
+        },
+        {
+            "label": "Client Id",
+            "name": "clientId",
+            "description": "The ID for your client application registered with the API provider.",
+            "required": "true",
+            "type": "text",
+            "visibility": "config.authenticationMethod == 'oAuth2'"
+        },
+        {
+            "label": "Client Secret",
+            "name": "clientSecret",
+            "description": "The client secret given to you by the API provider",
+            "required": "config.authenticationMethod == 'oAuth2'",
+            "type": "text",
+            "visibility": "config.authenticationMethod == 'oAuth2'"
         },
         {
             "label": "Auth Scopes",
@@ -66,7 +110,12 @@
             "value": "https://www.googleapis.com/calendar/v3"
         }
     ],
-    "events": [],
+    "events": [
+        {
+            "label": "Webhook",
+            "name": "webhook",
+            "description": "Happens when Google Calendar sends a webhook to the package."
+        }],
     "metadata": [
         {
             "type": "script",
@@ -74,19 +123,14 @@
             "path": "/scripts/api.js"
         },
         {
-            "type": "flowStep",
-            "namespace": "apiCallGoogleCalendar",
-            "path": "/flowSteps/apiCallGoogleCalendar"
+            "type": "script",
+            "namespace": "utils",
+            "path": "/scripts/utils.js"
         },
         {
-            "type": "flowStep",
-            "namespace": "eventsManagerGoogleCalendar",
-            "path": "/flowSteps/eventsManagerGoogleCalendar"
-        },
-        {
-            "type": "flowStep",
-            "namespace": "calendarManagerGoogleCalendar",
-            "path": "/flowSteps/calendarManagerGoogleCalendar"
+            "type": "listener",
+            "namespace": "webhook",
+            "path": "/listeners/webhook.js"
         }
     ]
 }
