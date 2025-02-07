@@ -71,37 +71,9 @@
         {
             "label": "Auth Scopes",
             "name": "authScopes",
-            "description": "The auth scopes the service accounts have, if you select scopes that don't belong to your service account it will lead to authorization errors",
-            "type": "dropDown",
-            "multiplicity": "many",
-            "defaultValue": [
-                "calendar"
-            ],
-            "typeOptions": {
-                "allowCustom": true,
-                "possibleValues": [
-                    {
-                        "label": "Calendar (Complete access)",
-                        "name": "'calendar'"
-                    },
-                    {
-                        "label": "Calendar - Events (View and edit events on all your calendars)",
-                        "name": "'calendar.events'"
-                    },
-                    {
-                        "label": "Calendar - Events ReadOnly (View events on all your calendars)",
-                        "name": "'calendar.events.readonly'"
-                    },
-                    {
-                        "label": "Calendar ReadOnly (See and download any calendar you can access using your Google Calendar)",
-                        "name": "'calendar.readonly'"
-                    },
-                    {
-                        "label": "Calendar settings ReadOnly (View your Calendar settings)",
-                        "name": "'calendar.settings.readonly'"
-                    }
-                ]
-            }
+            "description": "The scope of access you are requesting, which may include multiple space-separated values.",
+            "required": "true",
+            "type": "text"
         },
         {
             "name": "GOOGLECALENDAR_API_BASE_URL",
