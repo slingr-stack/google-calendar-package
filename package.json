@@ -91,7 +91,7 @@
         },
         {
             "name": "GOOGLECALENDAR_API_BASE_URL",
-            "label": "Googlecalendar Api Url",
+            "label": "Google Calendar API URL",
             "type": "label",
             "value": "https://www.googleapis.com/calendar/v3"
         }
