@@ -9,9 +9,7 @@ let httpDependency = {
     post: httpReference.post,
     put: httpReference.put,
     patch: httpReference.patch,
-    delete: httpReference.delete,
-    head: httpReference.head,
-    options: httpReference.options
+    delete: httpReference.delete
 };
 
 let httpService = {};
@@ -215,16 +213,7 @@ function setApiUri(options) {
 
 function setRequestHeaders(options) {
     let headers = options.headers || {};
-
-    sys.logs.debug('[googlecalendar] Set header Bearer');
     headers = mergeJSON(headers, {"Content-Type": "application/json"});
-    headers = mergeJSON(headers, {"Authorization": "Bearer "+getAccessTokenForAccount()});
-
-    if (headers.Accept === undefined || headers.Accept === null || headers.Accept === "") {
-        sys.logs.debug('[googlecalendar] Set header accept');
-        headers = mergeJSON(headers, {"Accept": "application/json"});
-    }
-
     options.headers = headers;
     return options;
 }
