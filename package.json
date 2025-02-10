@@ -76,6 +76,20 @@
             "type": "text"
         },
         {
+            "name": "webhooksUrl",
+            "label": "Webhooks URL",
+            "description": "The URL to configure in webhooks of your Google Workspace App",
+            "type": "label",
+            "value": "config.WEBHOOK_URL"
+        },
+        {
+            "name": "oauthCallback",
+            "label": "OAuth callback",
+            "description": "The OAuth callback to configure in your Google Workspace App",
+            "type": "label",
+            "value":  "config.AUTH_CALLBACK_URL+'/authCallback'"
+        },
+        {
             "name": "GOOGLECALENDAR_API_BASE_URL",
             "label": "Googlecalendar Api Url",
             "type": "label",

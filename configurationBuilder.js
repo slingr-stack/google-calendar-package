@@ -13,8 +13,7 @@ let configurationBuilder = function (config) {
             accessTokenUrl: 'https://oauth2.googleapis.com/token',
             clientId: config.clientId,
             clientSecret: config.clientSecret,
-            scope: config.scope,
-            state: config.state,
+            scope: config.authScopes,
             oauthCallback: config.oauthCallback
         };
     }
