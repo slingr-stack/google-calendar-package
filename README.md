@@ -31,6 +31,44 @@ Otherwise, if you plan to use OAuth 2.0 authentication method:
 Note that the client must have access to the calendar resources. If you try to access to a resource that the user does not own
 the request will result in a 404 or 403 unauthorized error.
 
+To successfully use the Google Calendar package through a Service Account, please note the following requirements:
+
+### Domain-Wide Delegation (If you want to access all users' calendars within your organization):
+   If you wish to allow the Service Account to access the calendars of all users within your domain (Google Workspace/GSuite), you must configure Domain-Wide Delegation for the Service Account. This allows the Service Account to act on behalf of users in your organization.
+
+#### Steps to Set Up Domain-Wide Delegation:
+
+Enable Domain-Wide Delegation for the Service Account:
+
+1. Go to the Google Cloud Console.
+Navigate to IAM & Admin > Service Accounts.
+Select your Service Account and click on it.
+Under the Service Account details, enable Domain-Wide Delegation.
+Note the Client ID of the Service Account.
+Configure Delegation in Google Admin Console:
+
+2. Go to the Google Admin Console (you need to be a super administrator).
+Navigate to Security > API Controls.
+Under Domain-wide delegation, click Manage Domain Wide Delegation.
+Add the Client ID of your Service Account.
+Assign the necessary scopes (permissions) that you want the Service Account to access.
+
+### Share Individual User Calendars with the Service Account (If you want to access a specific user's calendar):
+   If you prefer to limit access to a specific user's calendar, you can share their calendar directly with the Service Account.
+
+#### Steps to Share a Calendar with the Service Account:
+
+Go to Google Calendar:
+
+1. Open Google Calendar with the user account whose calendar you want to share.
+Share the Calendar:
+
+2. On the left panel, find the calendar you want to share (under My calendars).
+Click on the three dots next to the calendar and select Settings and sharing.
+Scroll down to the Share with specific people section.
+Add the email address of the Service Account (this is typically in the format your-service-account@your-project.iam.gserviceaccount.com).
+3. Set the appropriate permissions, such as "See all event details" or "Make changes to events" (depending on your needs).
+
 ## Configuration Parameters
 If you have selected OAuth 2.0 authorization method, these are the field names to use the parameters with dynamic configuration.
 
@@ -38,10 +76,10 @@ Name (Dynamic Config param name) - Type
 * Client Id (clientId) - Text
 * Client Secret (clientSecret) - Text
 
-#### Authorization Method
+#### Authentication Method
 Allows to choose between Account Service and OAuth 2.0 authorization methods.
 
-**Name**: `authorizationMethod`
+**Name**: `authenticationMethod`
 **Type**: buttonsGroup
 **Mandatory**: true
 
@@ -51,6 +89,8 @@ The email created for the service account, it shows up when Service Account auth
 **Name**: `serviceAccountEmail`
 **Type**: text
 **Mandatory**: true
+
+
 
 #### Private Key
 The private key associated to the service account, it shows up when Service Account authorization method is enabled.
