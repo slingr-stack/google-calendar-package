@@ -268,7 +268,7 @@ function getJsonWebToken() {
     try{
         let currentTime = new Date().getTime();
         let futureTime = new Date(currentTime + ( 10 * 60 * 1000)).getTime();
-        let scopes = config.get("scope");
+        let scopes = config.get("authScopes");
         return sys.utils.crypto.jwt.generate(
             {
                 iss: config.get("serviceAccountEmail"),
