@@ -73,13 +73,6 @@ The client secret given to you by the API provider, it shows up when OAuth 2.0 a
 **Type**: password
 **Mandatory**: true
 
-#### State
-An opaque value to prevent cross-site request forgery. it shows up when OAuth 2.0 authorization method is enabled.
-
-**Name**: `state`
-**Type**: text
-**Mandatory**: false
-
 #### OAuth Callback
 The OAuth callback to configure in your Google Calendar App. it shows up when OAuth 2.0 authorization method is enabled.
 
@@ -185,7 +178,7 @@ There are no events for this endpoint.
 * HTTP Service
 * OAuth Package
 
-# About SLINGR
+# About Slingr
 
 Slingr is a low-code rapid application development platform that accelerates development, with robust architecture for integrations and executing custom workflows and automation.
 
