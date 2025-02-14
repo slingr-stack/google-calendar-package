@@ -121,6 +121,7 @@ The OAuth callback to configure in your Google Calendar App. it shows up when OA
 
 #### Webhooks URL
 The URL to configure in webhooks of your Google Calendar App.
+(Take a look at the [Google Calendar documentation](https://developers.google.com/calendar/api/guides/push?hl=es-419).)
 
 **Name**: `webhooksUrl`
 **Type**: label
