@@ -9,9 +9,7 @@ let httpDependency = {
     post: httpReference.post,
     put: httpReference.put,
     patch: httpReference.patch,
-    delete: httpReference.delete,
-    head: httpReference.head,
-    options: httpReference.options
+    delete: httpReference.delete
 };
 
 let httpService = {};
@@ -24,7 +22,18 @@ function handleRequestWithRetry(requestFn, options, callbackData, callbacks) {
     try {
         return requestFn(options, callbackData, callbacks);
     } catch (error) {
-        sys.logs.info("[googlecalendar] Handling request "+JSON.stringify(error));
+        sys.logs.info("[googlecalendar] Handling request..."+ JSON.stringify(error));
+        if (error.additionalInfo.status === 401) {
+            if (config.get("authenticationMethod") === 'oAuth2') {
+                dependencies.oauth.functions.refreshToken('googlecalendar:refreshToken');
+            } else {
+                getAccessTokenForAccount(); // this will attempt to get a new access_token in case it has expired
+            }
+            return requestFn(setAuthorization(options), callbackData, callbacks);
+        } else {
+            throw error;
+        }
+
     }
 }
 
@@ -36,6 +45,34 @@ function createWrapperFunction(requestFn) {
 
 for (let key in httpDependency) {
     if (typeof httpDependency[key] === 'function') httpService[key] = createWrapperFunction(httpDependency[key]);
+}
+
+/**
+ * Retrieves the access token.
+ *
+ * @return {void} The access token refreshed on the storage.
+ */
+exports.getAccessToken = function () {
+    sys.logs.info("[googlecalendar] Getting access token");
+    if (config.get("authenticationMethod") === "oAuth2") {
+        return dependencies.oauth.functions.connectUser("googlecalendar:userConnected");
+    } else if (config.get("authenticationMethod") === "serviceAccount") {
+        return getAccessTokenForAccount();
+    }
+}
+
+/**
+ * Removes the access token from the oauth.
+ *
+ * @return {void} The access token removed on the storage.
+ */
+exports.removeAccessToken = function () {
+    if (config.get("authenticationMethod") === "oAuth2") {
+        sys.logs.info("[googlecalendar] Removing access token from oauth");
+        return dependencies.oauth.functions.disconnectUser("googlecalendar:disconnectUser");
+    } else {
+        sys.storage.remove('installationInfo-googlecalendar---'+  sys.context.getCurrentUserRecord().id());
+    }
 }
 
 /****************************************************
@@ -112,128 +149,6 @@ exports.delete = function(path, httpOptions, callbackData, callbacks) {
     return httpService.delete(GoogleCalendar(options), callbackData, callbacks);
 };
 
-/**
- * Sends an HTTP HEAD request to the specified URL with the provided HTTP options.
- *
- * @param {string} path         - The path to send the HEAD request to.
- * @param {object} httpOptions  - The options to be included in the HEAD request check http-service documentation.
- * @param {object} callbackData - Additional data to be passed to the callback functions. [optional]
- * @param {object} callbacks    - The callback functions to be called upon completion of the HEAD request. [optional]
- * @return {object}             - The response of the HEAD request.
- */
-exports.head = function(path, httpOptions, callbackData, callbacks) {
-    let options = checkHttpOptions(path, httpOptions);
-    return httpService.head(GoogleCalendar(options), callbackData, callbacks);
-};
-
-/**
- * Sends an HTTP OPTIONS request to the specified URL with the provided HTTP options.
- *
- * @param {string} path         - The path to send the OPTIONS request to.
- * @param {object} httpOptions  - The options to be included in the OPTIONS request check http-service documentation.
- * @param {object} callbackData - Additional data to be passed to the callback functions. [optional]
- * @param {object} callbacks    - The callback functions to be called upon completion of the OPTIONS request. [optional]
- * @return {object}             - The response of the OPTIONS request.
- */
-exports.options = function(path, httpOptions, callbackData, callbacks) {
-    let options = checkHttpOptions(path, httpOptions);
-    return httpService.options(GoogleCalendar(options), callbackData, callbacks);
-};
-
-exports.utils = {
-
-    /**
-     * Converts a given date to a timestamp.
-     *
-     * @param {number | string} params      - The date to be converted.
-     * @return {object}                     - An object containing the timestamp.
-     */
-    fromDateToTimestamp: function(params) {
-        if (!!params) {
-            return {timestamp: new Date(params).getTime()};
-        }
-        return null;
-    },
-
-    /**
-     * Converts a timestamp to a date object.
-     *
-     * @param {number} timestamp            - The timestamp to convert.
-     * @return {object}                     - The date object representing the timestamp.
-     */
-    fromTimestampToDate: function(timestamp) {
-        return new Date(timestamp);
-    },
-
-    /**
-     * Gets a configuration from the properties.
-     *
-     * @param {string} property             - The name of the property to get.
-     *                                          If it is empty, return the entire configuration object.
-     * @return {string}                     - The value of the property or the whole object as string.
-     */
-    getConfiguration: function (property) {
-        if (!property) {
-            sys.logs.debug('[googleCalendar] Get configuration');
-            return JSON.stringify(config.get());
-        }
-        sys.logs.debug('[googleCalendar] Get property: '+property);
-        return config.get(property);
-    },
-
-    /**
-     * Concatenates a path with a param query and its value.
-     *
-     * @param path                          - The path to concatenate.
-     * @param key                           - The name of the param.
-     * @param value                         - The value of the param.
-     * @returns {string}                    - The concatenated path without coding parameters.
-     */
-    concatQuery: function (path, key, value) {
-        return path + ((!path || path.indexOf('?') < 0) ? '?' : '&') + key + "=" + value;
-    },
-
-    /**
-     * Merges two JSON objects into a single object.
-     *
-     * @param {Object} json1 - The first JSON object to be merged.
-     * @param {Object} json2 - The second JSON object to be merged.
-     * @return {Object} - The merged JSON object.
-     */
-    mergeJSON: mergeJSON,
-};
-
-/**
- * Verifies the signature of the given body using the provided signature coded in sha1 or sha256.
- *
- * @param {string} body                 - The body to be verified.
- * @param {string} signature            - The signature to be checked.
- * @param {string} signature256         - The signature256 to be checked.
- * @return {boolean}                    - True if the signature is valid, false otherwise.
- */
-exports.utils.verifySignature = function (body, signature, signature256) {
-    sys.logs.info("Checking signature");
-    let verified = true;
-    let verified256 = true;
-    let secret = config.get("webhookSecret");
-    if (!body || body === "") {
-        sys.logs.warn("The body is null or empty");
-        return false;
-    }
-    if (!secret || secret === "" || !signature || signature === "" ||
-        !sys.utils.crypto.verifySignatureWithHmac(body, signature.replace("sha1=",""), secret, "HmacSHA1")) {
-        sys.logs.warn("Invalid signature sha1");
-        verified = false;
-    }
-    if (!secret || secret === "" ||  !signature256 ||!signature256 ||
-        !sys.utils.crypto.verifySignatureWithHmac(body, signature.replace("sha256=",""), secret, "HmacSHA256")) {
-        sys.logs.warn("Invalid signature sha 256");
-        verified256 = false;
-    }
-
-    return (verified || verified256);
-};
-
 /****************************************************
  Private helpers
  ****************************************************/
@@ -280,6 +195,7 @@ let GoogleCalendar = function (options) {
     options = options || {};
     options= setApiUri(options);
     options= setRequestHeaders(options);
+    options = setAuthorization(options);
     return options;
 }
 
@@ -297,27 +213,35 @@ function setApiUri(options) {
 
 function setRequestHeaders(options) {
     let headers = options.headers || {};
-
-    sys.logs.debug('[googlecalendar] Set header Bearer');
     headers = mergeJSON(headers, {"Content-Type": "application/json"});
-    headers = mergeJSON(headers, {"Authorization": "Bearer "+getAccessTokenForAccount()});
-
-    if (headers.Accept === undefined || headers.Accept === null || headers.Accept === "") {
-        sys.logs.debug('[googlecalendar] Set header accept');
-        headers = mergeJSON(headers, {"Accept": "application/json"});
-    }
-
     options.headers = headers;
     return options;
 }
 
-function getAccessTokenForAccount(account) {
-    account = account || "account";
-    sys.logs.info('[googlecalendar] Getting access token for account: '+account);
-    let installationJson = sys.storage.get('installationInfo-GoogleCalendar---'+account) || {id: null};
+function setAuthorization(options) {
+    sys.logs.debug('[googlecalendar] setting authorization');
+    if (config.get("authenticationMethod") === "oAuth2") {
+        let authorization = options.authorization || {};
+        authorization = mergeJSON(authorization, {
+            type: "oauth2",
+            accessToken: sys.storage.get(
+                'installationInfo-googlecalendar-User-'+sys.context.getCurrentUserRecord().id() + ' - access_token',{decrypt:true}),
+            headerPrefix: "Bearer"
+        });
+        options.authorization = authorization;
+        return options;
+    } else {
+        options.headers = mergeJSON(options.headers, {"Authorization": "Bearer " + getAccessTokenForAccount()});
+        return options;
+    }
+}
+
+function getAccessTokenForAccount() {
+    sys.logs.info('[googlecalendar] Getting access token for account: '+ sys.context.getCurrentUserRecord().id());
+    let installationJson = sys.storage.get('installationInfo-googlecalendar---'+  sys.context.getCurrentUserRecord().id()) || {id: null};
     let token = installationJson.token || null;
     let expiration = installationJson.expiration || 0;
-    if (!token || expiration < new Date().getTime()) {
+    if (!token || expiration < new Date()) {
         sys.logs.info('[googlecalendar] Access token is expired or not found. Getting new token');
         let res = httpService.post(
             {
@@ -332,36 +256,33 @@ function getAccessTokenForAccount(account) {
             });
         token = res.access_token;
         let expires_at = res.expires_in;
-        expiration = new Date(new Date(expires_at) - 1 * 60 * 1000).getTime();
+        expiration = expires_at * 1000 +  + new Date().getTime();
         installationJson = mergeJSON(installationJson, {"token": token, "expiration": expiration});
-        sys.logs.info('[googlecalendar] Saving new token for account: ' + account);
-        sys.storage.replace('installationInfo-GoogleCalendar---'+account, installationJson);
+        sys.logs.info('[googlecalendar] Saving new token for account: ' + sys.context.getCurrentUserRecord().id());
+        sys.storage.put('installationInfo-googlecalendar---'+  sys.context.getCurrentUserRecord().id(), installationJson);
     }
     return token;
 }
 
 function getJsonWebToken() {
-    let currentTime = new Date().getTime();
-    let futureTime = new Date(currentTime + ( 10 * 60 * 1000)).getTime();
-    let scopeProp= config.get("scope");
-    let scopes;
-    if (!!scopeProp) {
-        scopes = scopeProp.map(function (s) {
-            return "https://www.googleapis.com/auth/" + s;
-        });
+    try{
+        let currentTime = new Date().getTime();
+        let futureTime = new Date(currentTime + ( 10 * 60 * 1000)).getTime();
+        let scopes = config.get("authScopes");
+        return sys.utils.crypto.jwt.generate(
+            {
+                iss: config.get("serviceAccountEmail"),
+                aud: GOOGLEWORKSPACE_API_AUTH_URL,
+                scope: scopes,
+                iat: currentTime,
+                exp: futureTime
+            },
+            config.get("privateKey"),
+            "RS256"
+        );
+    } catch (error) {
+        sys.logs.error("[googlecalendar] Error generating JWT: ", error);
     }
-    let scopesGlobal = scopes.join(" ");
-    return sys.utils.crypto.jwt.generate(
-        {
-            iss: config.get("serviceAccountEmail"),
-            aud: GOOGLEWORKSPACE_API_AUTH_URL,
-            scope: scopesGlobal,
-            iat: currentTime,
-            exp: futureTime
-        },
-        config.get("privateKey"),
-        "RS256"
-    )
 }
 
 function mergeJSON (json1, json2) {

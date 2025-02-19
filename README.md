@@ -1,58 +1,150 @@
-<table class="table" style="margin-top: 10px">
-    <thead>
-    <tr>
-        <th>Title</th>
-        <th>Last Updated</th>
-        <th>Summary</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>Google Calendar package</td>
-        <td>November 13, 2023</td>
-        <td>Detailed description of the API of the Google Calendar package.</td>
-    </tr>
-    </tbody>
-</table>
-
 # Overview
+Repo: [https://github.com/slingr-stack/google-calendar-package](https://github.com/slingr-stack/google-calendar-package)
 
-This endpoint allows direct access to the [Google Calendar API](https://developers.google.com/calendar/api/v3/reference/) through a service account, however it provides shortcuts and helpers for most common use cases.
-
+This [package](https://platform-docs.slingr.io/dev-reference/data-model-and-logic/packages/) allows direct access to the [Google Calendar API](https://developers.google.com/calendar/api/v3/reference?hl=es-419),
+through a Client ID OAuth 2.0 account; however, it provides shortcuts and helpers for most common use cases.
+Also, you can refer to the [Google Calendar Documentation](https://developers.google.com/calendar/api/guides/overview?hl=es-419) for more information.
 Some features available in this endpoint are:
 
 - Authentication and authorization
 - Direct access to the Google Calendar API
-- Helpers for API methods
-- Flow Steps for common use cases
+- Listener that catch incoming webhooks from Google Calendar
 
 ## Configuration
 
-To use the Google Calendar package you must create an app in the [Google Developer Console](https://console.developers.google.com)
-by following these instructions:
+To use the Google Calendar package,
+first you must create an app in the [Google Developer Console](https://console.developers.google.com)
+then create a Google Cloud project for your Google Calendar app, then if you plan to use Service Account authentication method, follow these instructions:
 
-- Create a Google Cloud project for your Google Calendar app.
-- Enable the Calendar API in your Google Cloud project.
+- Enable the Admin SDK API in your Google Cloud project.
+- Create a service account and credentials and delegate domain-wide authority to it (assign ONLY the necessary scopes to your service - account) [Click here for instructions](https://cloud.google.com/iam/docs/manage-access-service-accounts?hl=es-419).
 - Download the JSON file with the service account credentials to get the service account private key.
 
-### Service account email
+Otherwise, if you plan to use OAuth 2.0 authentication method:
 
-As explained above, this value comes from the credentials file.
+- Enable the Calendar API in your Google Cloud project.
+- Create a Client ID OAuth 2.0 account.
+- Copy the Client ID and Client Secret of the package.
 
-### OAuth Scopes
+### Scopes
 
-The scopes the service account have access to. Take into account if any scope is selected to which the service account does not have access the endpoint will fail to be authorized to make any requests.
+Note that the client must have access to the calendar resources. If you try to access to a resource that the user does not own
+the request will result in a 404 or 403 unauthorized error.
 
-### Private Key
+To successfully use the Google Calendar package through a Service Account, please note the following requirements:
 
-As explained above, this value also comes from the credentials file.
+### Domain-Wide Delegation (If you want to access all users' calendars within your organization):
+   If you wish to allow the Service Account to access the calendars of all users within your domain (Google Workspace/GSuite), you must configure Domain-Wide Delegation for the Service Account. This allows the Service Account to act on behalf of users in your organization.
+
+#### Steps to Set Up Domain-Wide Delegation:
+
+Enable Domain-Wide Delegation for the Service Account:
+
+1. Go to the Google Cloud Console.
+Navigate to IAM & Admin > Service Accounts.
+Select your Service Account and click on it.
+Under the Service Account details, enable Domain-Wide Delegation.
+Note the Client ID of the Service Account.
+Configure Delegation in Google Admin Console:
+
+2. Go to the Google Admin Console (you need to be a super administrator).
+Navigate to Security > API Controls.
+Under Domain-wide delegation, click Manage Domain Wide Delegation.
+Add the Client ID of your Service Account.
+Assign the necessary scopes (permissions) that you want the Service Account to access.
+
+### Share Individual User Calendars with the Service Account (If you want to access a specific user's calendar):
+   If you prefer to limit access to a specific user's calendar, you can share their calendar directly with the Service Account.
+
+#### Steps to Share a Calendar with the Service Account:
+
+Go to Google Calendar:
+
+1. Open Google Calendar with the user account whose calendar you want to share.
+Share the Calendar:
+
+2. On the left panel, find the calendar you want to share (under My calendars).
+Click on the three dots next to the calendar and select Settings and sharing.
+Scroll down to the Share with specific people section.
+Add the email address of the Service Account (this is typically in the format your-service-account@your-project.iam.gserviceaccount.com).
+3. Set the appropriate permissions, such as "See all event details" or "Make changes to events" (depending on your needs).
+
+## Configuration Parameters
+If you have selected OAuth 2.0 authorization method, these are the field names to use the parameters with dynamic configuration.
+
+Name (Dynamic Config param name) - Type
+* Client Id (clientId) - Text
+* Client Secret (clientSecret) - Text
+
+#### Authentication Method
+Allows to choose between Account Service and OAuth 2.0 authorization methods.
+
+**Name**: `authenticationMethod`
+**Type**: buttonsGroup
+**Mandatory**: true
+
+#### Service Account Email
+The email created for the service account, it shows up when Service Account authorization method is enabled.
+
+**Name**: `serviceAccountEmail`
+**Type**: text
+**Mandatory**: true
+
+
+
+#### Private Key
+The private key associated to the service account, it shows up when Service Account authorization method is enabled.
+
+**Name**: `privateKey`
+**Type**: password
+**Mandatory**: true
+
+#### Client ID
+The ID for your client application registered with the API provider, it shows up when OAuth 2.0 authorization method is enabled.
+
+**Name**: `clientId`
+**Type**: text
+**Mandatory**: true
+
+#### Client Secret
+The client secret given to you by the API provider, it shows up when OAuth 2.0 authorization method is enabled.
+
+**Name**: `clientSecret`
+**Type**: password
+**Mandatory**: true
+
+#### OAuth Callback
+The OAuth callback to configure in your Google Calendar App. it shows up when OAuth 2.0 authorization method is enabled.
+
+**Name**: `oauthCallback`
+**Type**: label
+
+#### Webhooks URL
+The URL to configure in webhooks of your Google Calendar App.
+(Take a look at the [Google Calendar documentation](https://developers.google.com/calendar/api/guides/push?hl=es-419).)
+
+**Name**: `webhooksUrl`
+**Type**: label
+
+#### Google Calendar API URL
+The URL of the Google Calendar API where the requests are performed.
+
+**Name**: `GOOGLECALENDAR_API_BASE_URL`
+**Type**: label
+
+### Storage Value And Offline Mode
+
+By default, the `Service Account` authorization method is used. When using this method, you can directly call the following method to retrieve the access token, without requiring any additional actions:
+
+`pkg.googlecalendar.api.getAccessToken();`
+
+This will return the access token, which will be securely stored in the application's storage and associated with a user by their ID.
+
+If you have enabled the `OAuth 2.0` authorization method, the same method is used. The difference is that the Google Calendar package includes the `&access_type=offline` parameter, which allows the application to request a refresh token. This happens when calling the UI service (which should run during runtime, for example, by invoking the method within an action) to log in to the application.
+
+The Google service will return an object containing both the access token and the refresh token. Each token will be stored in the app's storage (accessible via the Monitor), where you can view them encrypted and associated with the user by ID.
 
 # Javascript API
-
-The Javascript API of the googlecalendar package has two pieces:
-
-- **HTTP requests**
-- **Flow steps**
 
 ## HTTP requests
 You can make `DELETE`,`GET`,`POST`,`PATCH`,`PUT` requests to the [googlecalendar API](https://developers.google.com/calendar/api/v3/reference) like this:
@@ -66,364 +158,70 @@ var response = pkg.googlecalendar.api.patch('/calendars/:calendarId/acl/:ruleId'
 var response = pkg.googlecalendar.api.put('/users/me/calendarList/:calendarId', body)
 var response = pkg.googlecalendar.api.put('/users/me/calendarList/:calendarId')
 ```
+### Create an event.
+
+```javascript
+const event = {
+    'summary': 'Google I/O 2015',
+    'location': '800 Howard St., San Francisco, CA 94103',
+    'description': 'A chance to hear more about Google\'s developer products.',
+    'start': {
+        'dateTime': '2015-05-28T09:00:00-07:00',
+        'timeZone': 'America/Los_Angeles'
+    },
+    'end': {
+        'dateTime': '2015-05-28T17:00:00-07:00',
+        'timeZone': 'America/Los_Angeles'
+    },
+    'recurrence': [
+        'RRULE:FREQ=DAILY;COUNT=2'
+    ],
+    'attendees': [
+        {'email': 'lpage@example.com'},
+        {'email': 'sbrin@example.com'}
+    ],
+    'reminders': {
+        'useDefault': false,
+        'overrides': [
+            {'method': 'email', 'minutes': 24 * 60},
+            {'method': 'popup', 'minutes': 10}
+        ]
+    }
+};
+
+const request = pkg.googlecalendar.api.post('/calendars/:calendarId/events', event);
+```
+### Subscribes to google calendar events changes.
+
+```javascript
+const body = {
+  "id": "<use a unique UUID or any similar unique string>", // Your channel ID. Maximum length: 64 characters. 
+  "type": "web_hook",
+  "address": "https://mydomain.com/notifications", // Your receiving URL.
+  ...
+  "token": "target=myApp-myChangesChannelDest", // (Optional) Your changes channel token.
+  "expiration": 1426325213000 // (Optional) Your requested channel expiration date and time.
+};
+const response = pkg.googlecalendar.api.post('/calendars/:calendarId/events/watch', body);
+```
 
 Please take a look at the documentation of the [HTTP service](https://github.com/slingr-stack/http-service)
 for more information about generic requests.
 
-## Flow Step
-
-As an alternative option to using scripts, you can make use of Flows and Flow Steps specifically created for the package:
-<details>
-    <summary>Click here to see the Flow Steps</summary>
-
-<br>
-
-### Generic Flow Step
-
-Generic flow step for full use of the entire package and its services.
-
-<h3>Inputs</h3>
-
-<table>
-    <thead>
-    <tr>
-        <th>Label</th>
-        <th>Type</th>
-        <th>Required</th>
-        <th>Default</th>
-        <th>Visibility</th>
-        <th>Description</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>URL (Method)</td>
-        <td>choice</td>
-        <td>yes</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            This is the http method to be used against the endpoint. <br>
-            Possible values are: <br>
-            <i><strong>DELETE,GET,POST,PATCH,PUT</strong></i>
-        </td>
-    </tr>
-    <tr>
-        <td>URL (Path)</td>
-        <td>choice</td>
-        <td>yes</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            The url to which this endpoint will send the request. This is the exact service to which the http request will be made. <br>
-            Possible values are: <br>
-            <i><strong>/calendars/{calendarId}/acl/{ruleId}<br>/users/me/calendarList/{calendarId}<br>/calendars/{calendarId}/events/{eventId}<br>/calendars/{calendarId}/acl<br>/calendars/{calendarId}/acl/{ruleId}<br>/users/me/calendarList<br>/users/me/calendarList/{calendarId}<br>/users/me/calendarList/{calendarId}<br>/calendars/{calendarId}<br>/colors<br>/calendars/{calendarId}/events<br>/calendars/{calendarId}/events/{eventId}<br>/calendars/{calendarId}/events/{eventId}/instances<br>/users/me/settings<br>/users/me/settings/{setting}<br>/users/me/settings/{setting}<br>/calendars/{calendarId}/acl<br>/calendars/{calendarId}/acl/watch<br>/users/me/calendarList<br>/users/me/calendarList/watch<br>/calendars/{calendarId}/clear<br>/calendars<br>/calendars/{calendarId}<br>/calendars/{calendarId}<br>/channels/stop<br>/calendars/{calendarId}/events/import<br>/calendars/{calendarId}/events<br>/calendars/{calendarId}/events/{eventId}/move<br>/calendars/{calendarId}/events/quickAdd<br>/calendars/{calendarId}/events/watch<br>/freeBusy<br>/users/me/settings/watch<br>/calendars/{calendarId}/acl/{ruleId}<br>/users/me/calendarList/{calendarId}<br>/calendars/{calendarId}<br>/calendars/{calendarId}/events/{eventId}<br>/calendars/{calendarId}/acl/{ruleId}<br>/users/me/calendarList/{calendarId}<br>/calendars/{calendarId}<br>/calendars/{calendarId}/events/{eventId}<br></strong></i>
-        </td>
-    </tr>
-    <tr>
-        <td>Headers</td>
-        <td>keyValue</td>
-        <td>no</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            Used when you want to have a custom http header for the request.
-        </td>
-    </tr>
-    <tr>
-        <td>Query Params</td>
-        <td>keyValue</td>
-        <td>no</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            Used when you want to have a custom query params for the http call.
-        </td>
-    </tr>
-    <tr>
-        <td>Body</td>
-        <td>json</td>
-        <td>no</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            A payload of data can be sent to the server in the body of the request.
-        </td>
-    </tr>
-    <tr>
-        <td>Override Settings</td>
-        <td>boolean</td>
-        <td>no</td>
-        <td> false </td>
-        <td>Always</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Follow Redirect</td>
-        <td>boolean</td>
-        <td>no</td>
-        <td> false </td>
-        <td> overrideSettings </td>
-        <td>Indicates that the resource has to be downloaded into a file instead of returning it in the response.</td>
-    </tr>
-    <tr>
-        <td>Full response</td>
-        <td> boolean </td>
-        <td>no</td>
-        <td> false </td>
-        <td> overrideSettings </td>
-        <td>Include extended information about response</td>
-    </tr>
-    <tr>
-        <td>Connection Timeout</td>
-        <td> number </td>
-        <td>no</td>
-        <td> 5000 </td>
-        <td> overrideSettings </td>
-        <td>Connect a timeout interval, in milliseconds (0 = infinity).</td>
-    </tr>
-    <tr>
-        <td>Read Timeout</td>
-        <td> number </td>
-        <td>no</td>
-        <td> 60000 </td>
-        <td> overrideSettings </td>
-        <td>Read a timeout interval, in milliseconds (0 = infinity).</td>
-    </tr>
-    </tbody>
-</table>
-
-<h3>Outputs</h3>
-
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>response</td>
-        <td>object</td>
-        <td>
-            Object resulting from the response to the endpoint call.
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-
-</details>
-
-For more information about how shortcuts or flow steps work, and how they are generated, take a look at the [slingr-helpgen tool](https://github.com/slingr-stack/slingr-helpgen).
-
-## Additional Flow Step
-
-
-<details>
-    <summary>Click here to see the Customs Flow Steps</summary>
-
-<br>
-
-
-
-### Calendar Manager
-
-This flow step will send a request to handle calendars.
-
-<h3>Inputs</h3>
-
-<table>
-    <thead>
-    <tr>
-        <th>Label</th>
-        <th>Type</th>
-        <th>Required</th>
-        <th>Default</th>
-        <th>Visibility</th>
-        <th>Description</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>Actions</td>
-        <td>choice</td>
-        <td>yes</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            This is for the http method to be used against the endpoint. <br>
-            Possible values are: <br>
-            <i><strong>
-                Find One Calendar (GET /calendars/{idCalendar})
-                Find All Calendars (GET /calendars)
-                Create Calendar (POST /calendars)
-                Update Calendar (PUT /calendars/{idCalendar})
-                Delete Calendar (DELETE /calendars/{idCalendar})
-            </strong></i>
-        </td>
-    </tr>
-    <tr>
-        <td>Path Params</td>
-        <td>keyValue</td>
-        <td>no</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            Used when you want to have a custom query params for the call (idCalendar).
-        </td>
-    </tr>
-    <tr>
-        <td>Body</td>
-        <td>json</td>
-        <td>no</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            A payload of data can be sent to the server in the body of the request.
-        </td>
-    </tr>
-    <tr>
-        <td>Full response</td>
-        <td> boolean </td>
-        <td>no</td>
-        <td> false </td>
-        <td> overrideSettings </td>
-        <td>Include extended information about response</td>
-    </tr>
-    </tbody>
-</table>
-
-<h3>Outputs</h3>
-
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>response</td>
-        <td>object</td>
-        <td>
-            Object resulting from the response to the endpoint call.
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-For more information about how shortcuts or flow steps works, and how they are generated, take a look at the [slingr-helpgen tool](https://github.com/slingr-stack/slingr-helpgen).
-
-
-### Events Manager
-
-This flow step will send a request to handle events.
-
-<h3>Inputs</h3>
-
-<table>
-    <thead>
-    <tr>
-        <th>Label</th>
-        <th>Type</th>
-        <th>Required</th>
-        <th>Default</th>
-        <th>Visibility</th>
-        <th>Description</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>Actions</td>
-        <td>choice</td>
-        <td>yes</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            This is for the http method to be used against the endpoint. <br>
-            Possible values are: <br>
-            <i><strong>
-                Find One Event (GET /calendars/{idCalendar}/events/{idEvent})
-                Find All Events (GET /calendars/{idCalendar}/events)
-                Create Event (POST /calendars/{idCalendar}/events)
-                Update Event (PUT /calendars/{idCalendar}/events/{idEvent}) 
-                Delete Event (DELETE /calendars/{idCalendar}/events/{idEvent})
-            </strong></i>
-        </td>
-    </tr>
-    <tr>
-        <td>Path Params</td>
-        <td>keyValue</td>
-        <td>no</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            Used when you want to have a custom query params for the call (idCalendar and idEvent).
-        </td>
-    </tr>
-    <tr>
-        <td>Body</td>
-        <td>json</td>
-        <td>no</td>
-        <td> - </td>
-        <td>Always</td>
-        <td>
-            A payload of data can be sent to the server in the body of the request.
-        </td>
-    </tr>
-    <tr>
-        <td>Full response</td>
-        <td> boolean </td>
-        <td>no</td>
-        <td> false </td>
-        <td> overrideSettings </td>
-        <td>Include extended information about response</td>
-    </tr>
-    </tbody>
-</table>
-
-<h3>Outputs</h3>
-
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>response</td>
-        <td>object</td>
-        <td>
-            Object resulting from the response to the endpoint call.
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-For more information about how shortcuts or flow steps works, and how they are generated, take a look at the [slingr-helpgen tool](https://github.com/slingr-stack/slingr-helpgen).
-
-
-
-</details>
-
 ## Events
+### Webhook
+
+Incoming webhook events are automatically captured by the default listener named `Catch HTTP google calendar events`, which can be found below the `Scripts` section. Alternatively, you have the option to create a new package listener. For more information, please refer to the [Listeners Documentation](https://platform-docs.slingr.io/dev-reference/data-model-and-logic/listeners/). Please take a look at the Google Calendar documentation of the [Webhooks](https://developers.google.com/calendar/api/guides/push?hl=es-419) for more information.
 
 There are no events for this endpoint.
 
 ## Dependencies
-* HTTP Service (Latest Version)
+* HTTP Service
+* OAuth Package
 
-# About SLINGR
+# About Slingr
 
-SLINGR is a low-code rapid application development platform that accelerates development, with robust architecture for integrations and executing custom workflows and automation.
+Slingr is a low-code rapid application development platform that accelerates development, with robust architecture for integrations and executing custom workflows and automation.
 
 [More info about SLINGR](https://slingr.io)
 
